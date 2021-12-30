@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f73607e4-53f6-4d99-b129-29d7ac05636d" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="error_handlingFlow" doc:id="a73b5c59-e169-49a3-b119-1fe15bc9eca8" >
+		<http:listener doc:name="Listener" doc:id="9a80974e-62d1-43af-b033-2f41df5c31cd" config-ref="HTTP_Listener_config" path="/main">
+			<http:error-response >
+				<http:body ><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<set-payload value='#["I am in the main flow"]' doc:name="Set Payload" doc:id="35805ee3-43dc-4992-a3f8-27d7b9c5a721" />
+		<http:request method="GET" doc:name="Request" doc:id="82ef3b7f-3905-42cf-9ee8-9c9f1a9cb102" url="ccc.hh.m"/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="07a51119-b0ce-41f3-9c50-beb892d853e6" type="ANY">
+				<set-payload value='#["inside error handler for connectivity issues"]' doc:name="Set Payload" doc:id="f2779df8-6be2-4b5d-9bac-f8bf345b6eeb" />
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>
